@@ -11,7 +11,7 @@ contract crowdFunding{
     uint public numOfContributors;
     constructor(uint _minContribution,uint _deadline,uint _target){
         minContribution=_minContribution;
-        deadline=_deadline;
+        deadline=block.timestamp+_deadline;
         target=_target;
         manager=msg.sender;
         
