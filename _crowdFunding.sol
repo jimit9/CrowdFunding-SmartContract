@@ -16,4 +16,14 @@ contract crowdFunding{
         manager=msg.sender;
         
     }
+    function sendEth() public payable {
+        require(deadline>block.timestamp,"Deadline has passed.");
+        require(msg.value>=minContribution,"Send 100 wei");
+        if(contributors[msg.sender]==0){
+            numOfContributors++;
+        }
+        contributors[msg.sender]=contributors[msg.sender] + msg.value;
+        raisedAmount = raisedAmount + msg.value;
+
+    }
 }
