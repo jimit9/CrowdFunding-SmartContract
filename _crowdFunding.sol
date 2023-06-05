@@ -26,4 +26,17 @@ contract crowdFunding{
         raisedAmount = raisedAmount + msg.value;
 
     }
+    function getBalance() public view returns(uint){
+        return address(this).balance;
+    }
+    function refund () public  {
+        require(raisedAmount<target,"Target is already met");
+        require(deadline<block.timestamp,"deadline is not passed yet"); 
+        require(contributors[msg.sender]>0,"You're not a contributor");
+        address payable user = payable (msg.sender);
+        user.transfer(contributors[msg.sender]);
+        contributors[msg.sender]=0;
+
+
+    }
 }
