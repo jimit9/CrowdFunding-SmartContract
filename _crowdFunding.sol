@@ -9,12 +9,21 @@ contract crowdFunding{
     uint public target;
     uint public raisedAmount;
     uint public numOfContributors;
+    struct Request {
+        string description;
+        address payable recipient;
+        uint value;
+        bool completed;
+        uint noOfVoters;
+        mapping (address=>bool) voters;
+    }
+    mapping (uint=>Request) public requests;
+    uint public noOfRequests;
     constructor(uint _minContribution,uint _deadline,uint _target){
         minContribution=_minContribution;
-        deadline=block.timestamp+_deadline;
+        deadline=block.timestamp + _deadline;
         target=_target;
         manager=msg.sender;
-        
     }
     function sendEth() public payable {
         require(deadline>block.timestamp,"Deadline has passed.");
@@ -36,7 +45,27 @@ contract crowdFunding{
         address payable user = payable (msg.sender);
         user.transfer(contributors[msg.sender]);
         contributors[msg.sender]=0;
-
+    }
+    function createRequest(string memory _description,address payable _recipient, uint _value) public {
+        require(msg.sender==manager,"only manager can call this function!");
+        Request storage newRequest = requests[noOfRequests];
+       newRequest.description=_description;
+       newRequest.recipient=_recipient;
+       newRequest.value=_value;
+       newRequest.completed=false;
+       newRequest.noOfVoters=0;
+       noOfRequests++;
+    }
+    function voteRequest(uint _requestNo) public {
+        require(contributors[msg.sender]>0,"you're not a contributor.");
+        Request storage thisRequest = requests[_requestNo];
+        if(thisRequest.voters[msg.sender]==false){
+            thisRequest.voters[msg.sender]==true;
+            thisRequest.noOfVoters++;
+        }
+        
+            revert("you've already voted");
 
     }
+
 }
