@@ -60,11 +60,22 @@ contract crowdFunding{
         require(contributors[msg.sender]>0,"you're not a contributor.");
         Request storage thisRequest = requests[_requestNo];
         if(thisRequest.voters[msg.sender]==false){
-            thisRequest.voters[msg.sender]==true;
+            thisRequest.voters[msg.sender]=true;
             thisRequest.noOfVoters++;
         }
         
             revert("you've already voted");
+
+    }
+    function makePayment(uint _requestNo) public {
+                require(msg.sender==manager,"only manager can call this function!");
+                require(raisedAmount>target,"Target not met");   
+                Request storage thisRequest = requests[_requestNo];
+                require(thisRequest.noOfVoters > numOfContributors / 2,"Majority not supported");
+                require(thisRequest.completed==false,"This request is completed");
+                thisRequest.recipient.transfer(thisRequest.value);
+                thisRequest.completed=true;
+
 
     }
 
